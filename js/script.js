@@ -27,11 +27,38 @@ var infiniteBackground = {
     }
 }
 
+var pipe = { // definition of object of the class pipe
+    imgSrc: '../img/pipe.png',
+    size: null,
+    style: {
+        position: 'fixed',
+        top: null,
+        left: null,
+        width: null,
+        bottom: 0
+    },
+    flip: false,
+    init: function(parentEl){
+        var pipeEl = document.createElement('img');
+        
+        pipeEl.src = this.imgSrc;
+        this.style.left = Math.floor(Math.random() * 1000) + 'px';
+        this.style.width = Math.floor(Math.random() * 200) + 'px';
+        Object.assign(pipeEl.style, this.style)
+
+        parentEl.appendChild(pipeEl);
+    }
+}
+
 $(document).ready(function(){
     infiniteBackground.init(
-        document.getElementById('background'),
-        'https://previews.123rf.com/images/davidoff205020/davidoff2050201807/davidoff205020180700014/103899414-minimalist-abstract-background-seamless-loop-infinite-space-background-matrix-of-glowing-stars-with-.jpg'
+        document.getElementById('background')
     );
+
+    var pipe1 = pipe;
+    var pipe2 = pipe;
+    pipe1.init(document.body);
+    pipe2.init(document.body);
 
     // $(document).on('scroll', function(e){
     //     var topOffset = $('#overlay').offset().top;
