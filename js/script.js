@@ -1,5 +1,5 @@
 class Background {
-    constructor(el, bg = '../img/bg.png'){
+    constructor(el, bgImg = '../img/bg.png'){
         this.el = el;
         this.style = {
             left: 0,
@@ -7,18 +7,17 @@ class Background {
             position: 'fixed',
             height: '100%',
             width: '100%',
-            backgroundImage: null,
             backgroundRepeat: 'repeat-x',
             backgroundPosition: '0 0',
             backgroundSize: 'auto 100%',
-            backgroundImage: `url("${bg}")`
+            backgroundImage: `url("${bgImg}")`
         };
-        this.moveRatio = 50;
+        this.movementRatio = 50;
         Object.assign(this.el.style, this.style);
     }
 
     scrollSideWay(distance){
-        this.el.style.backgroundPosition = `-${distance / this.moveRatio}px 0px`;
+        this.el.style.backgroundPosition = `-${distance / this.movementRatio}px 0px`;
     }
 }
 
@@ -35,7 +34,7 @@ class Pipe {
             bottom: 0
         };
         this.flip = false;
-        this.moveRatio = 20;
+        this.movementRatio = 20;
 
         var pipeEl = document.createElement('img');
         pipeEl.src = this.imgSrc;
@@ -46,31 +45,74 @@ class Pipe {
     }
 
     moveLeft(distance){
-        document.getElementById(this.id).style.left = `${parseInt(this.style.left) - distance / this.moveRatio}px`;  
+        let _current = parseInt(this.style.left);
+        document.getElementById(this.id).style.left = `${_current - distance / this.movementRatio}px`;  
+    }
+}
+
+class Bird {
+    constructor(parentEl){
+        this.id = 'bird_' + Math.floor(Math.random() * 2000);
+        this.imgSrc = '../img/bird.png';
+        this.style = {
+            position: 'fixed',
+            top: Math.floor(Math.random() * 70) + '%',
+            left: Math.floor(Math.random() * 2000) + 'px',
+            width: Math.floor(Math.random() * 200) + 'px'
+        };
+        this.movementRatio = 20;
+        
+        var birdEl = document.createElement('img');
+        birdEl.src = this.imgSrc;
+        birdEl.id = this.id;
+        Object.assign(birdEl.style, this.style); 
+
+        parentEl.appendChild(birdEl);
+    }
+
+    moveLeft(distance){
+        let _current = parseInt(this.style.left);
+        document.getElementById(this.id).style.left = `${_current + distance / this.movementRatio}px`;  
     }
 }
 
 $(document).ready(function(){
-    var background = new Background(
+    // instance of the class Background, "this" variable inside an instance refers to the instance itself
+    // not to the class
+    var bg = new Background( 
         document.getElementById('background')
     );
 
+    console.log(bg.el)
+    
+    var pipe1 = new Pipe(document.body);
+    var pipe2 = new Pipe(document.body);
+    var pipe3 = new Pipe(document.body);
+    var pipe4 = new Pipe(document.body);
+    var pipe5 = new Pipe(document.body);   
+
+    var bird1 = new Bird(document.body);
+    var bird2 = new Bird(document.body);
+    var bird3 = new Bird(document.body);
+    var bird4 = new Bird(document.body);
+    var bird5 = new Bird(document.body);   
+    
     document.addEventListener('scroll', function(){
         var offset = window.scrollY;
 
-        background.scrollSideWay(offset);
+        bg.scrollSideWay(offset);
         pipe1.moveLeft(offset)
         pipe2.moveLeft(offset)
         pipe3.moveLeft(offset)
         pipe4.moveLeft(offset)
         pipe5.moveLeft(offset)
-    })
 
-    var pipe1 = new Pipe(document.body);
-    var pipe2 = new Pipe(document.body);
-    var pipe3 = new Pipe(document.body);
-    var pipe4 = new Pipe(document.body);
-    var pipe5 = new Pipe(document.body);
+        bird1.moveLeft(offset)
+        bird2.moveLeft(offset)
+        bird3.moveLeft(offset)
+        bird4.moveLeft(offset)
+        bird5.moveLeft(offset)
+    })
 });
 
 
