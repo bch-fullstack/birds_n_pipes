@@ -1,5 +1,5 @@
 class Background {
-    constructor(el, bgImg = '../img/bg.png'){
+    constructor(el, bgImg = 'birds/img/bg.png'){
         this.el = el;
         this.style = {
             left: 0,
@@ -55,6 +55,7 @@ class Bird {
         this.id = 'bird_' + Math.floor(Math.random() * 2000);
         this.imgSrc = '../img/bird.png';
         this.jumping = false;
+        this.fallen = false;
         this.style = {
             position: 'fixed',
             top: Math.floor(Math.random() * 80) + '%',
@@ -71,7 +72,7 @@ class Bird {
         parentEl.appendChild(birdEl);
         this.addGravity()
         var scope = this;
-        document.getElementById(this.id).addEventListener('click', function(){
+        window.addEventListener('click', function(){
             scope.jump()
         })
     }
@@ -84,17 +85,23 @@ class Bird {
     addGravity(){
         var scope = this;
         setInterval(function(){
-            if (scope.jumping) {
+            if (scope.jumping || scope.fallen) {
                 return;
             }
 
             var _current = parseInt(scope.style.top);
-            
-            var _new = _current < 99 ? _current + 1 : _current;
+
+            if (_current == 100) {
+                const fallenBirds = new Event('FALLEN_BIRDS');
+                scope.fallen = true;
+                window.dispatchEvent(fallenBirds);
+            }
+                 
+            var _new = _current < 100 ? _current + 1 : _current;
             scope.style.top = _new;
             
             document.getElementById(scope.id).style.top = `${_current}%`;  
-        }, 1000/55)
+        }, 1000/25)
     }
 
     jump(){
@@ -111,7 +118,7 @@ class Bird {
 
             var _current = parseInt(scope.style.top);
             counter++;
-            var _new = _current > 1 ? _current - 1 : _current;
+            var _new = _current > 1 ? _current - 2 : _current;
             scope.style.top = _new;
 
             // if (_current < 100){
@@ -123,6 +130,7 @@ class Bird {
             document.getElementById(scope.id).style.top = `${_current}%`;  
         }, 1000/75)
     }
+
 }
 
 $(document).ready(function(){
@@ -134,7 +142,7 @@ $(document).ready(function(){
 
     console.log(bg.el)
     
-    var birds = new Array(20);
+    var birds = new Array(1);
 
     for (var i=0; i<birds.length; i++){
         birds[i] = new Bird(document.body)
@@ -146,8 +154,11 @@ $(document).ready(function(){
         pipes[i] = new Pipe(document.body)
     }
     
-    document.addEventListener('scroll', function(){
-        var offset = window.scrollY;
+    var offset = 0;
+
+        
+    var startAnimation = setInterval(() => {
+        offset += 100;
 
         bg.scrollSideWay(offset);
 
@@ -155,9 +166,16 @@ $(document).ready(function(){
             pipe.moveLeft(offset)
         })
 
-        birds.forEach(function(bird){
-            bird.moveLeft(offset)
-        })
+        // birds.forEach(function(bird){
+        //     bird.moveLeft(offset)
+        // })
+    }, 50) 
+
+    var stopInterval = () => clearInterval(startAnimation);
+
+    window.addEventListener('FALLEN_BIRDS', function(){
+        console.log('Stop')
+        stopInterval()
     })
 });
 
