@@ -77,7 +77,8 @@ class Bird {
         parentEl.appendChild(birdEl);
         this.addGravity()
         var scope = this;
-        document.getElementById(this.id).addEventListener('click', function(){
+
+        document.addEventListener('click', function(){
             scope.jump()
         })
     }
@@ -97,8 +98,7 @@ class Bird {
             var _current = parseInt(scope.style.top);
             
             if (_current == 100) {
-                var fallenBird = new Event('FALLEN_BIRD');
-                console.log(`Dispatch a FALLEN Event from the bird ${scope.id}`)
+                var fallenBird = new CustomEvent('FALLEN_BIRD', { 'detail': scope.id });
                 document.dispatchEvent(fallenBird);
             }
 
@@ -106,7 +106,13 @@ class Bird {
             scope.style.top = _new;
             
             document.getElementById(scope.id).style.top = `${_current}%`;  
-        }, 1000/55)
+        }, 1000/35)
+
+        document.addEventListener('FALLEN_BIRD', function(e){
+            if (e.detail == scope.id) {
+                clearInterval(gravity);
+            }
+        });
     }
 
     jump(){
@@ -116,13 +122,14 @@ class Bird {
         this.jumping = true;
 
         setInterval(function(){
-            if (counter === 10) {
+            if (counter === 15) {
                 scope.jumping = false;
                 return;
             }
 
             var _current = parseInt(scope.style.top);
             counter++;
+
             var _new = _current > 1 ? _current - 1 : _current;
             scope.style.top = _new;
 
@@ -148,11 +155,13 @@ $(document).ready(function(){
     console.log(bg.scrollSideWay) // content of scrollSideWay
 
     
-    var birds = new Array(20);
+    // var birds = new Array(10);
 
-    for (var i=0; i<birds.length; i++){
-        birds[i] = new Bird(document.body)
-    }
+    // for (var i=0; i<birds.length; i++){
+    //     birds[i] = new Bird(document.body)
+    // }
+
+    var bird1 = new Bird(document.body);
 
     var pipes = new Array(20); // pipes = [undefined,undefined,,,,,,,,]
 
