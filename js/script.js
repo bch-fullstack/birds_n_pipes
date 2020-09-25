@@ -13,7 +13,7 @@ class Background {
             backgroundSize: 'auto 100%',
             backgroundImage: `url("${bgImg}")`
         };
-        this.movementRatio = 50;
+        this.movementRatio = 250;
         Object.assign(this.el.style, this.style);
     }
 
@@ -35,7 +35,7 @@ class Pipe {
             bottom: 0
         };
         this.flip = false;
-        this.movementRatio = 20;
+        this.movementRatio = 100;
 
         var pipeEl = document.createElement('img');
         pipeEl.src = this.imgSrc;
@@ -79,7 +79,7 @@ class Bird {
         this.addGravity()
         var scope = this;
 
-        document.addEventListener('click', function(){
+        document.addEventListener('mousedown', function(){
             if (scope.fallen) {
                 return; // don't perform jumping if the bird has fallen
             }
@@ -190,7 +190,7 @@ $(document).ready(function(){
         // birds.forEach(function(bird){
         //     bird.moveLeft(offset)
         // })
-    }, 50)
+    }, 10)
 
     document.addEventListener('FALLEN_BIRD', function(){
         console.log('Detected a fallen bird');
